@@ -2,7 +2,7 @@
 Converters
 
 
-2 main controllers http post controllers are being used to controll requests.
+2 main http post controllers are being used.
 
 Getxml - accepts application/json data and returns application/xml string.
 Getjson - accepts application/xml data and returns application/json string.
