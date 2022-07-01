@@ -17,6 +17,7 @@ namespace TCPIP_Server
 
         public TCPIPServer(int port = 38000, string ip = "", int bufferSize = 64 * 1024, byte startByte = (byte)'A')
         {
+            //Deneme
             Port = port;
             IP = ip;
             BufferSize = bufferSize;
