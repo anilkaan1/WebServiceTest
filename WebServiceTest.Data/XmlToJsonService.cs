@@ -65,7 +65,7 @@ namespace WebServiceTest.Data
 
             return result;
 
-
+            
 
             //3 tane  stringe çevirme tipi implement edildi.  (jsondoc, json, result)
 

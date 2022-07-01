@@ -9,6 +9,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebServiceTest.Data", "WebS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "WebServiceTest.Converters", "WebServiceTest.Converters\WebServiceTest.Converters.csproj", "{2D01668D-B5A1-4664-9C1D-A81713129EEF}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TCPIP_ServerClient", "TCPIPSOCKET\TCPIP_ServerClient.csproj", "{F5F0527B-E8E8-4F7F-A38A-9CD89CB602EE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TCPIPListenerWorker", "TCPIPListenerWorker\TCPIPListenerWorker.csproj", "{BAC679FC-2976-4E6A-9576-D9FD5E327272}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +31,14 @@ Global
 		{2D01668D-B5A1-4664-9C1D-A81713129EEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2D01668D-B5A1-4664-9C1D-A81713129EEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2D01668D-B5A1-4664-9C1D-A81713129EEF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5F0527B-E8E8-4F7F-A38A-9CD89CB602EE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5F0527B-E8E8-4F7F-A38A-9CD89CB602EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5F0527B-E8E8-4F7F-A38A-9CD89CB602EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5F0527B-E8E8-4F7F-A38A-9CD89CB602EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BAC679FC-2976-4E6A-9576-D9FD5E327272}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BAC679FC-2976-4E6A-9576-D9FD5E327272}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BAC679FC-2976-4E6A-9576-D9FD5E327272}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BAC679FC-2976-4E6A-9576-D9FD5E327272}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

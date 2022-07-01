@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Web.Http;
 using System.Xml.Linq;
+using TCPIP_Server;
 using WebServiceTest.Converters;
 using WebServiceTest.Data;
 namespace WebServiceTest.Controllers
@@ -21,6 +22,10 @@ namespace WebServiceTest.Controllers
         public MainController(ILogger<MainController> logger)
         {
            _logger = logger;
+            TCPIPServer yeni = new TCPIPServer();
+
+            yeni.setupserver();
+            yeni.StartListener();
         }
 
 

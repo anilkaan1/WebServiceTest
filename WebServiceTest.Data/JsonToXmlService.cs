@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Runtime.Serialization;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Xml;
+﻿using System.Text.Json;
 using System.Xml.Linq;
-using System.Xml.Serialization;
+using TCPIP_ServerClient;
 using WebServiceTest.Converters;
 
 namespace WebServiceTest.Data
@@ -55,6 +48,10 @@ namespace WebServiceTest.Data
             {
                 //Real Functioning will be here.
 
+                TCPIPClientMain main = new TCPIPClientMain("192.168.1.1");
+                main.StartCommunicationThread();
+
+
 
                 return ConvertedXmlString;
 
@@ -70,61 +67,5 @@ namespace WebServiceTest.Data
 
             return String.Format("{0}ayayayay"+" gfdgsfs",3);
         }
-
-
-        //public Dictionary<string ,object> Conversion(Dictionary<string,object> notConvertDict)
-        //{
-        //    Dictionary<string, object> result = notConvertDict;
-
-
-
-        //    foreach (KeyValuePair<string, object> entry in notConvertDict)
-        //    {
-        //        string valueType = ((JsonElement)notConvertDict[entry.Key]).ValueKind.ToString();
-
-
-        //        if(valueType == "String")
-        //        {
-        //            result[entry.Key] = ((JsonElement)notConvertDict[entry.Key]).ToString();
-        //        }
-
-        //        else if (valueType == "Integer")
-        //        {
-        //            result[entry.Key] = Convert.ToInt32((JsonElement)notConvertDict[entry.Key]);
-        //        }
-
-        //        else if (valueType == "Array")
-        //        {
-                    
-        //            foreach(var a in ((JsonElement)notConvertDict[entry.Key]).EnumerateArray()){
-
-
-        //                if (a.ValueKind.ToString() == "String")
-        //                {
-        //                    result[entry.Key] = ((JsonElement)notConvertDict[entry.Key]).ToString();
-        //                }
-
-
-
-
-
-        //            }
-
-        //            result[entry.Key] = notConvertDict[entry.Key].ToString();
-
-        //        }
-                
-
-        //        else if (valueType == "Object")
-        //        {
-        //            Dictionary<string, object> ToBeConverted = System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, object>>((JsonElement)notConvertDict[entry.Key]);
-
-        //            result[entry.Key] = Conversion(ToBeConverted);
-        //        }
-                
-        //    }
-        //    return result;
-        //}
-       
     }
 }

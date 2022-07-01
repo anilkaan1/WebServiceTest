@@ -1,3 +1,4 @@
+using TCPIPListenerWorker;
 using WebServiceTest.Converters;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -15,6 +16,7 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddControllers().AddXmlSerializerFormatters();
 
+builder.Services.AddSingleton<TCPIPListenerBGS>();
 
 var app = builder.Build();
 

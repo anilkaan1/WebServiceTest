@@ -13,6 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\TCPIPListenerWorker\TCPIPListenerWorker.csproj" />
+    <ProjectReference Include="..\TCPIPSOCKET\TCPIP_ServerClient.csproj" />
     <ProjectReference Include="..\WebServiceTest.Converters\WebServiceTest.Converters.csproj" />
     <ProjectReference Include="..\WebServiceTest.Data\WebServiceTest.Data.csproj" />
   </ItemGroup>
