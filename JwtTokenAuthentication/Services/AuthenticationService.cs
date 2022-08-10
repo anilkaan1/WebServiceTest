@@ -109,6 +109,9 @@ namespace JwtTokenAuthentication.Services
             string SessionID = xmldoc.Element("ITQXML").Element("SESSIONID").Value;
 
             string GROUPID = xmldoc.Element("ITQXML").Element("GROUPID").Value;
+
+            //Test1
+
             //ObjectResult ojojo = new ObjectResult(result);
             //ojojo.StatusCode = 200;
             //return ojojo;
