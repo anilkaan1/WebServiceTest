@@ -20,12 +20,11 @@ namespace TCPIP_ServerClient
         private string IP;
         private int Port;
 
-        public TCPIPClient(int port , string ip , int bufferSize = 1024 * 64, byte StartByte = (byte)'A')
+        public TCPIPClient(int port , string ip , int bufferSize = 1024 * 64)
         {
             this.Port = port;
             this.IP = ip;
             this.BufferSize = bufferSize;
-            this.StartByte = StartByte;
         }
 
         /// <summary>
@@ -96,9 +95,7 @@ namespace TCPIP_ServerClient
                     NetworkStream stream = Client.GetStream();
                     if (DataLength < BufferSize)
                     {
-                        stream.Write(dataToSend, 0, DataLength);
-
-                        
+                        stream.Write(dataToSend, 0, DataLength);                    
 
                         success = true;
                     }
@@ -170,8 +167,6 @@ namespace TCPIP_ServerClient
                             numBytesRead += stream.Read(dataLength, 0, 8);
                             if (numBytesRead == 12)
                             {
-                                //if (dataHeader[0] != StartByte)
-                                //    break;
                                 DataLength = BitConverter.ToInt64(dataLength, 0); /////////////////
                                 isFirstsSampleReceived = true;
                             }
@@ -225,15 +220,9 @@ namespace TCPIP_ServerClient
             }
         }
 
-
-
-
-
-
         private byte[] PrepareDataHeader(int len)
         {
             byte[] header = new byte[5];
-            header[0] = StartByte;
             byte[] lengthBytes = BitConverter.GetBytes(len);
             lengthBytes.CopyTo(header, 1);
             return header;

@@ -11,7 +11,7 @@ namespace JwtTokenAuthentication.Services
     {
         public string GenerateToken(DateTime notBefore, DateTime expire);
 
-        public UserLoginResponseModel GenerateToken(string[] claimRoles, DateTime notBefore, DateTime expire, string UID);
+        public UserLoginResponseModel GenerateToken(string[] claimRoles, DateTime notBefore, DateTime expire);
 
 
     }

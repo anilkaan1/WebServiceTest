@@ -1,14 +1,9 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
-using System.Xml;
 using System.Xml.Linq;
-using System.Xml.Serialization;
+using WebServiceTest.Models;
 
 namespace WebServiceTest.Converters
 {
@@ -299,15 +294,48 @@ namespace WebServiceTest.Converters
             }
 
             return newstr;
-        }
-        
+        }        
 
-
-
-
-
-        public static XDocument PrepareSetRefreshTokenData(string UID, string GROUPID, string SESSIONID,string token,string refreshtoken)
+        public static IEnumerable<ValidationResult> PrepareRefreshTokenInfo(XDocument xmldoc)
         {
+            string UID = xmldoc.Element("ITQXML").Element("USERID").Value;
+
+            string SESSIONID = xmldoc.Element("ITQXML").Element("SESSIONID").Value;
+
+            string GROUPID = xmldoc.Element("ITQXML").Element("GROUPID").Value;
+
+            AuthenticateValidationModel authenticateValidationModel = new AuthenticateValidationModel(UID, SESSIONID, GROUPID);
+
+            IEnumerable<ValidationResult> sonuc = authenticateValidationModel.Validate(new System.ComponentModel.DataAnnotations.ValidationContext(authenticateValidationModel));
+
+            return sonuc;        
+
+        }
+
+        public static List<string> GetRefreshTokenInfo(XDocument xmldoc)
+        {
+            string UID = xmldoc.Element("ITQXML").Element("USERID").Value;
+
+            string SESSIONID = xmldoc.Element("ITQXML").Element("SESSIONID").Value;
+
+            string GROUPID = xmldoc.Element("ITQXML").Element("GROUPID").Value;
+
+            List<string> yeni = new List<string>() { UID, SESSIONID, GROUPID };
+
+            return yeni;
+
+        }
+
+
+        public static XDocument PrepareSetRefreshTokenData(XDocument xmldoc,string token,string refreshtoken)
+        {
+
+            string UID = xmldoc.Element("ITQXML").Element("USERID").Value;
+
+            string SESSIONID = xmldoc.Element("ITQXML").Element("SESSIONID").Value;
+
+            string GROUPID = xmldoc.Element("ITQXML").Element("GROUPID").Value;        
+            
             XDocument reqDoc = new XDocument();
 
             XElement elementa = new XElement("ITQDOC");
@@ -340,7 +368,32 @@ namespace WebServiceTest.Converters
 
         }
 
+        public static string CreateAuthenticateWithRefreshTokenRequest(string userid,string groupid,string sessionid)
+        {
+            string response = "";
 
+            XDocument xDocument = new XDocument();
+
+            XDeclaration declaration = new XDeclaration("1.0", "utf-8", "yes");
+
+            XElement rootElement = new XElement("ITQDOC");
+
+            xDocument.Declaration = declaration;
+
+            xDocument.AddFirst(rootElement);
+
+            xDocument.Add("USERID", userid);
+            xDocument.Add("GROUPID", groupid);
+            xDocument.Add("SESSIONID", sessionid);
+            xDocument.Add("Command", "AuthenticateWithRefreshToken");
+
+
+            response = xDocument.ToString();
+
+
+
+            return response;
+        }
 
 
 

@@ -14,11 +14,7 @@ namespace TCPIP_ServerClient
         public string ServerIP;
         public bool IsConnectedToServer { get; set; }
         public string ClientMessage { get; set; }
-
-
         public char ClientCommand { get; set; }
-
-
         public string ClientMessageReturn { get; set; }
         public int TargetPosition { get; set; }
 
@@ -71,7 +67,7 @@ namespace TCPIP_ServerClient
         }
         private bool ConnectToServer()
         {
-            Client = new TCPIPClient(port: Constants.Constants.Port, ip: ServerIP, StartByte: StartByte);
+            Client = new TCPIPClient(port: Constants.Constants.Port, ip: ServerIP);
             ServerIP = Client.ConnectToServer();
 
             if (ServerIP == "")
@@ -86,7 +82,7 @@ namespace TCPIP_ServerClient
         {
             ThreadEnabled = true;
             CommunicationPeriod = 1.0 / CommmunicationFrequency;
-            CoreFcn(ClientCommand);
+            CoreFcn();
         }
         public void StopCommunication()
         {
@@ -102,7 +98,7 @@ namespace TCPIP_ServerClient
             }
 
         }
-        private void CoreFcn(char clientCommand)
+        private void CoreFcn()
         {
             Stopwatch watch = Stopwatch.StartNew();
             bool success = ConnectToServer();
@@ -113,7 +109,7 @@ namespace TCPIP_ServerClient
                 return;
             }
 
-            SendServerData(clientCommand);
+            SendServerData();
 
             //byte[] a = new byte[239];
             //Client.Client.GetStream().Read(a,0,239);
@@ -129,13 +125,13 @@ namespace TCPIP_ServerClient
             watch.Restart();
             }
         }
-        private byte[] PrepareDataToBeSent(char clientcommand)
+        private byte[] PrepareDataToBeSent()
         {
-            byte[] messageBytes = PrepareMessageBytes(clientcommand);
+            byte[] messageBytes = PrepareMessageBytes();
             return messageBytes;
         }
 
-        private byte[] PrepareMessageBytes(char clientcommand)
+        private byte[] PrepareMessageBytes()
         {
             int messageLen;
             byte[] messageData;
@@ -165,9 +161,9 @@ namespace TCPIP_ServerClient
 
             return messageData;
         }
-        private void SendServerData(char clientcommand)
+        private void SendServerData()
         {
-            byte[] data = PrepareDataToBeSent(clientcommand);
+            byte[] data = PrepareDataToBeSent();
 
             string test1 = Encoding.ASCII.GetString(data);
 

@@ -50,7 +50,7 @@ namespace JwtTokenAuthentication.Services
             return handler.WriteToken(Token);
         }
         
-        public UserLoginResponseModel GenerateToken(string[] claimRoles, DateTime notBefore, DateTime expire,string UID)
+        public UserLoginResponseModel GenerateToken(string[] claimRoles, DateTime notBefore, DateTime expire)
         {
             SymmetricSecurityKey key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("AnilKaanBaskaya1."));
 
@@ -73,19 +73,24 @@ namespace JwtTokenAuthentication.Services
             //    new Claim("Email","xxx@test.com")
             //});
 
-            foreach (string role in claimRoles)
-            {
-                claims.Add(new Claim(ClaimTypes.Role, role));
+            //foreach (string role in claimRoles)
+            //{
+            //    claims.Add(new Claim(ClaimTypes.Role, role));
 
-            }
+            //}
             #endregion
 
-            string guid = Guid.NewGuid().ToString();
+
 
             claims.Add(new Claim("GROUPID", claimRoles[2]));
             claims.Add(new Claim("SESSIONID", claimRoles[1]));
             claims.Add(new Claim("USERID", claimRoles[0]));
-            
+
+
+            //claims.Add(new Claim(JwtRegisteredClaimNames.Exp, "432432432"));
+            //claims.Add(new Claim(JwtRegisteredClaimNames.Email, "432432432"));
+            //claims.Add(new Claim(JwtRegisteredClaimNames.Name, "432432432"));
+
 
 
             JwtSecurityToken Token = new JwtSecurityToken(
@@ -97,26 +102,16 @@ namespace JwtTokenAuthentication.Services
                 signingCredentials: credentials
                 );
 
-           
-
             JwtSecurityTokenHandler handler = new JwtSecurityTokenHandler();
 
             string token = handler.WriteToken(Token);
 
+            string guid = Guid.NewGuid().ToString();
+
             RefleshToken yeni = new RefleshToken {
                 Token = guid,
-                jwtid = Token.Id,
-                UID = UID,
-                Created = DateTime.Now,
-                Expires = DateTime.Now.AddMonths(6),
             };
-
-            
-
-            
-
-            
-
+         
             string reftoken = yeni.Token;
 
             return new UserLoginResponseModel(token,reftoken);

@@ -16,6 +16,9 @@ using TCPIP_ServerClient;
 using WebServiceTest.Data;
 using System.Xml.Linq;
 using WebServiceTest.Converters;
+using JwtTokenAuthentication;
+using System.ComponentModel.DataAnnotations;
+using System.Collections;
 
 namespace JwtTokenAuthentication.Services
 {
@@ -46,11 +49,6 @@ namespace JwtTokenAuthentication.Services
 
             try
             {
-                //using RSA rsa = RSA.Create();
-                //rsa.ImportSubjectPublicKeyInfo(_jwtKey.RsaPublicKey.ToByteArray(), out _);
-
-                //_tokenValidationParameters.IssuerSigningKey = new RsaSecurityKey(rsa);
-
                 var principal = tokenHandler.ValidateToken(token, _tokenValidationParameters , out var validatedToken);
 
                 if (!IsJwtValidSecurityAlgorithm(validatedToken))
@@ -74,67 +72,41 @@ namespace JwtTokenAuthentication.Services
 
         public ObjectResult Authenticate(UserLoginRequestModel reqLogin)
         {
-
+            #region authentication
             TCPIPClientMain main = new TCPIPClientMain();
-
-            //main.ClientMessage = reqLogin.UID + ',' + reqLogin.PASSWORD;
-
+            
             JsonDocument messagejson = JsonSerializer.SerializeToDocument<UserLoginRequestModel>(reqLogin);
 
-            _JSONconverter.JsonToXmlSet(messagejson/*,session*/);
+            _JSONconverter.JsonToXmlSet(messagejson);
 
             string xmlmessage = _JSONconverter.ExecuteFunction();
 
             main.ClientMessage = xmlmessage;
 
-            main.ClientCommand = 'J';
-
             main.StartCommunicationThread();
 
             string result = main.ClientMessageReturn;
+            #endregion authentication
+
 
 
             XDocument xmldoc = XDocument.Parse(result);
-
-            IEnumerable<XElement> quesry = from c in xmldoc.Elements("Root").Elements("USERID") select c;
+            //IEnumerable<XElement> quesry = from c in xmldoc.Elements("Root").Elements("USERID") select c;
 
             //string UID = xmldoc.Elements("ITQXML").Elements("USERID").Select(e => e.Value).First();
 
             //string GROUPID = xmldoc.Elements("ITQXML").Elements("GROUPID").Select(e => e.Value).First();
+            IEnumerable<ValidationResult> sonuc = JsonXmlHelper.PrepareRefreshTokenInfo(xmldoc);
 
-            
+            List<string> refreshtokeninfo = JsonXmlHelper.GetRefreshTokenInfo(xmldoc);
 
-            string UID = xmldoc.Element("ITQXML").Element("USERID").Value;
-
-            string SessionID = xmldoc.Element("ITQXML").Element("SESSIONID").Value;
-
-            string GROUPID = xmldoc.Element("ITQXML").Element("GROUPID").Value;
-
-            //Test1
-
-            //ObjectResult ojojo = new ObjectResult(result);
-            //ojojo.StatusCode = 200;
-            //return ojojo;
-
-            
-
-
-            string result2 = "Authorized";
-
-            if (result2 == "Authorized")
+            if (!sonuc.Any())
             {
+                UserLoginResponseModel model = _JWTGenerator.GenerateToken(refreshtokeninfo.ToArray(), DateTime.Now, DateTime.Now.AddSeconds(150));    
 
-                UserLoginResponseModel model = _JWTGenerator.GenerateToken(new List<string> {UID,SessionID,GROUPID}.ToArray(), DateTime.Now, DateTime.Now.AddSeconds(150),reqLogin.USERNAME);
+                JsonDocument responseJson = JsonSerializer.SerializeToDocument(model);
 
-                //string b = _JWTGenerator.GenerateRefleshToken();
-
-                UserLoginResponseModel response = model;
-                //"{\"Token\":\""+ a +"\"}";            
-
-                JsonDocument responseJson = JsonSerializer.SerializeToDocument(response);
-
-
-                XDocument refreshset = JsonXmlHelper.PrepareSetRefreshTokenData(UID, GROUPID, SessionID,responseJson.RootElement.GetProperty("Token").ToString(),responseJson.RootElement.GetProperty("RefleshToken").ToString());
+                XDocument refreshset = JsonXmlHelper.PrepareSetRefreshTokenData(xmldoc,responseJson.RootElement.GetProperty("Token").ToString(),responseJson.RootElement.GetProperty("RefleshToken").ToString());
 
                 string refreshsetstr = JsonXmlHelper.XDocumentToString(refreshset);
 
@@ -177,7 +149,15 @@ namespace JwtTokenAuthentication.Services
 
             var expiryDateUnix = long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
 
-            string tokenjti = validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Jti).Value;
+            string USERID = validatedToken.Claims.Single(x => x.Type == "USERID").Value;
+            string SESSIONID = validatedToken.Claims.Single(x => x.Type == "SESSIONID").Value;
+            string GROUPID = validatedToken.Claims.Single(x => x.Type == "GROUPID").Value;
+
+
+
+
+
+
 
 
             var expiryDateTimeUtc = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(expiryDateUnix);
@@ -197,7 +177,7 @@ namespace JwtTokenAuthentication.Services
             string reftokens = "";   //DBden alınacak...  //Şimdilik elle alıyoruz.
             string refjti = "";
 
-            if (refjti == tokenjti)
+            if (true)
             {
                 UserLoginRequestModel model = new UserLoginRequestModel();
 
