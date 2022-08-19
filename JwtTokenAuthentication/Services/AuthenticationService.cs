@@ -49,7 +49,14 @@ namespace JwtTokenAuthentication.Services
 
             try
             {
+                //_tokenValidationParameters.ClockSkew = TimeSpan.FromMinutes(5);
+
+                _tokenValidationParameters.ValidateLifetime = false;///
+
                 var principal = tokenHandler.ValidateToken(token, _tokenValidationParameters , out var validatedToken);
+
+                _tokenValidationParameters.ValidateLifetime = true;///
+
 
                 if (!IsJwtValidSecurityAlgorithm(validatedToken))
                 {
@@ -102,7 +109,7 @@ namespace JwtTokenAuthentication.Services
 
             if (!sonuc.Any())
             {
-                UserLoginResponseModel model = _JWTGenerator.GenerateToken(refreshtokeninfo.ToArray(), DateTime.Now, DateTime.Now.AddSeconds(150));    
+                UserLoginResponseModel model = _JWTGenerator.GenerateToken(refreshtokeninfo.ToArray(), DateTime.UtcNow, DateTime.UtcNow.AddSeconds(30));    
 
                 JsonDocument responseJson = JsonSerializer.SerializeToDocument(model);
 
@@ -149,16 +156,7 @@ namespace JwtTokenAuthentication.Services
 
             var expiryDateUnix = long.Parse(validatedToken.Claims.Single(x => x.Type == JwtRegisteredClaimNames.Exp).Value);
 
-            string USERID = validatedToken.Claims.Single(x => x.Type == "USERID").Value;
-            string SESSIONID = validatedToken.Claims.Single(x => x.Type == "SESSIONID").Value;
-            string GROUPID = validatedToken.Claims.Single(x => x.Type == "GROUPID").Value;
-
-
-
-
-
-
-
+            
 
             var expiryDateTimeUtc = new DateTime(1970, 1, 1, 0, 0, 0).AddSeconds(expiryDateUnix);
 
@@ -172,39 +170,93 @@ namespace JwtTokenAuthentication.Services
             }
 
 
+            string USERID = validatedToken.Claims.Single(x => x.Type == "USERID").Value;
+            string SESSIONID = validatedToken.Claims.Single(x => x.Type == "SESSIONID").Value;
+            string GROUPID = validatedToken.Claims.Single(x => x.Type == "GROUPID").Value;
 
 
-            string reftokens = "";   //DBden alınacak...  //Şimdilik elle alıyoruz.
-            string refjti = "";
 
-            if (true)
+            string requestreftoken = JsonXmlHelper.CreateAuthenticateWithRefreshTokenRequest(reqRefresh.Token,reqRefresh.RefleshToken,USERID, SESSIONID, GROUPID);
+
+            TCPIPClientMain main = new TCPIPClientMain();
+
+            main.ClientMessage = requestreftoken;
+
+            main.StartCommunicationThread();
+
+            string responsereftoken = main.ClientMessageReturn;
+
+            XDocument responsereftokenXML = XDocument.Parse(responsereftoken);
+
+            string responserefsuccess = responsereftokenXML.Element("ITQXML").Element("RESULT").Value;
+
+            if (responserefsuccess == "True")
             {
-                UserLoginRequestModel model = new UserLoginRequestModel();
 
-                model.USERNAME = "test";
-                model.PASSWORDX = "Admin";
+                string[] infos = new string[3]{USERID,SESSIONID,GROUPID};
 
-                return Authenticate(model);
+                UserLoginResponseModel model = _JWTGenerator.GenerateToken(infos, DateTime.UtcNow, DateTime.UtcNow.AddSeconds(30));
+
+                JsonDocument responseJson = JsonSerializer.SerializeToDocument(model);
+
+                XDocument refreshset = JsonXmlHelper.PrepareSetRefreshTokenData(XDocument.Parse(requestreftoken), responseJson.RootElement.GetProperty("Token").ToString(), responseJson.RootElement.GetProperty("RefleshToken").ToString());
+
+                string refreshsetstr = JsonXmlHelper.XDocumentToString(refreshset);
+
+                main.ClientMessage = refreshsetstr;
+
+                main.StartCommunicationThread();
+
+                string result3 = main.ClientMessageReturn;
+
+                if (main.Client != null)
+                    main.StopCommunication();
+
+
+                ObjectResult ojoj = new ObjectResult(responseJson);
+                ojoj.StatusCode = 200;
+
+                return ojoj;
+
             }
-
-            if (reftokens == reqRefresh.RefleshToken)
+            else if(responserefsuccess == "False")
             {
-                UserLoginRequestModel model = new UserLoginRequestModel();
-
-                model.USERNAME = "test";
-                model.PASSWORDX = "Admin";
-
-                return Authenticate(model);
-            }
-            
-            else
-            {
-                ObjectResult ojoj = new ObjectResult("RefleshToken Bulunamadı.");
+                ObjectResult ojoj = new ObjectResult(responsereftoken);
 
                 ojoj.StatusCode = 401;
 
                 return ojoj;
             }
+            else
+            {
+                ObjectResult ojoj = new ObjectResult(responsereftoken);
+
+                ojoj.StatusCode = 401;
+
+                return ojoj;
+            }
+
+            //if (responserefsuccess == "True")
+            //{
+            //    UserLoginRequestModel model = new UserLoginRequestModel();
+
+            //    model.USERNAME = "test";
+            //    model.PASSWORDX = "Admin";
+
+            //    return Authenticate(model);
+            //}
+
+            //if (reftokens == reqRefresh.RefleshToken)
+            //{
+            //    UserLoginRequestModel model = new UserLoginRequestModel();
+
+            //    model.USERNAME = "test";
+            //    model.PASSWORDX = "Admin";
+
+            // Authenticate(model);
+
+
+
 
         }
     }

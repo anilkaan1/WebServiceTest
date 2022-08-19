@@ -48,8 +48,7 @@ namespace WebServiceTest.Controllers
             return Ok();
         }
 
-
-        [Authorize(Roles ="Admin")]
+        [Authorize]
         [Microsoft.AspNetCore.Mvc.HttpPost]
         [Microsoft.AspNetCore.Mvc.Route("Getxml")]
         [Consumes("application/json")]

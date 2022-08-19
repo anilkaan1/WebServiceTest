@@ -368,7 +368,7 @@ namespace WebServiceTest.Converters
 
         }
 
-        public static string CreateAuthenticateWithRefreshTokenRequest(string userid,string groupid,string sessionid)
+        public static string CreateAuthenticateWithRefreshTokenRequest(string token,string reftoken,string userid, string sessionid,string groupid)
         {
             string response = "";
 
@@ -376,16 +376,19 @@ namespace WebServiceTest.Converters
 
             XDeclaration declaration = new XDeclaration("1.0", "utf-8", "yes");
 
-            XElement rootElement = new XElement("ITQDOC");
+            XElement rootElement = new XElement("ITQXML");
 
             xDocument.Declaration = declaration;
 
             xDocument.AddFirst(rootElement);
 
-            xDocument.Add("USERID", userid);
-            xDocument.Add("GROUPID", groupid);
-            xDocument.Add("SESSIONID", sessionid);
-            xDocument.Add("Command", "AuthenticateWithRefreshToken");
+            rootElement.Add(new XElement("USERID", userid));
+            rootElement.Add(new XElement("GROUPID", groupid));
+            rootElement.Add(new XElement("SESSIONID", sessionid));
+            rootElement.Add(new XElement("TOKEN", token));
+            rootElement.Add(new XElement("REFRESHTOKEN", reftoken));
+
+            rootElement.Add(new XElement("Command", "AUTHENTICATEWITHREFRESHTOKEN"));
 
 
             response = xDocument.ToString();

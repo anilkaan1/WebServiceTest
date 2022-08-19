@@ -62,10 +62,11 @@ var tokenValidationParameters = new Microsoft.IdentityModel.Tokens.TokenValidati
     {
         CacheSignatureProviders = false
     },
+    
     ValidateIssuerSigningKey = true,
     ValidateLifetime = true,
-    RequireExpirationTime = false,
-    //ClockSkew = TimeSpan.Zero
+    RequireExpirationTime = true,
+    ClockSkew = TimeSpan.Zero
 };
 
 builder.Services.AddSingleton(tokenValidationParameters);

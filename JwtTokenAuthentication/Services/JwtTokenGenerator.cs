@@ -81,10 +81,11 @@ namespace JwtTokenAuthentication.Services
             #endregion
 
 
-
-            claims.Add(new Claim("GROUPID", claimRoles[2]));
-            claims.Add(new Claim("SESSIONID", claimRoles[1]));
             claims.Add(new Claim("USERID", claimRoles[0]));
+
+            claims.Add(new Claim("SESSIONID", claimRoles[1]));
+            
+            claims.Add(new Claim("GROUPID", claimRoles[2]));
 
 
             //claims.Add(new Claim(JwtRegisteredClaimNames.Exp, "432432432"));
